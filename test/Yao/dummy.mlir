@@ -3,9 +3,10 @@
 module {
     // CHECK-LABEL: func @bar()
     func @bar() {
-        %0 = constant 1 : i32
-        // CHECK: %{{.*}} = yao.foo %{{.*}} : i32
-        %res = yao.foo %0 : i32
+        // CHECK: %{{.*}} = yao.H : !yao.gate<1>
+        %H = yao.H : !yao.gate<1>
+        %I = yao.I : !yao.gate<1>
+        //%H2 = yao.chain(%H, %H) : !yao.gate<1>, !yao.gate<1> : !yao.gate<1>
         return
     }
 }

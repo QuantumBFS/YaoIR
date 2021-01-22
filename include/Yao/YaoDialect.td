@@ -23,6 +23,16 @@ def Yao_Dialect : Dialect {
     let cppNamespace = "::mlir::yao";
 }
 
+
+// Any integer type irrespective of its width and signedness semantics.
+def AnyGate : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::GateType>()">, "gate">;
+
+// Any integer type (regardless of signedness semantics) of a specific width.
+class Gate<int width>
+    : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::GateType>() && $_self.cast<::mlir::yao::GateType>().getNumQubits() == " # width>, width # "-bit gate"> {
+  int bitwidth = width;
+}
+
 //===----------------------------------------------------------------------===//
 // Base yao operation definition.
 //===----------------------------------------------------------------------===//

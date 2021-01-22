@@ -9,6 +9,6 @@
 #include "Yao/YaoOps.h"
 #include "Yao/YaoDialect.h"
 #include "mlir/IR/OpImplementation.h"
-
+#include "mlir/IR/Builders.h"
 #define GET_OP_CLASSES
 #include "Yao/YaoOps.cpp.inc"

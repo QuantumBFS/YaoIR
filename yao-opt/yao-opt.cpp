@@ -20,14 +20,38 @@
 #include "llvm/Support/ToolOutputFile.h"
 
 #include "Yao/YaoDialect.h"
+#include "Yao/YaoOps.h"
 
 int main(int argc, char **argv) {
+  using namespace mlir;
   mlir::registerAllPasses();
   // TODO: Register yao passes here.
 
   mlir::DialectRegistry registry;
   registry.insert<mlir::yao::YaoDialect>();
   registry.insert<mlir::StandardOpsDialect>();
+
+  MLIRContext context;
+  context.disableMultithreading();
+  context.getOrLoadDialect<mlir::yao::YaoDialect>();
+  context.getOrLoadDialect<StandardOpsDialect>();
+  // MLIRContext context;
+
+  mlir::OpBuilder builder(&context);
+  std::vector<mlir::Type> rettypes;
+  auto funcType = builder.getFunctionType(rettypes, rettypes);
+  mlir::FuncOp function = mlir::FuncOp(
+      mlir::FuncOp::create(builder.getUnknownLoc(), "moo", funcType));
+      
+  auto mod =
+      mlir::ModuleOp::create(mlir::OpBuilder(&context).getUnknownLoc());
+
+  auto entryBlock = function.addEntryBlock();
+
+  builder.setInsertionPointToStart(entryBlock);
+  builder.create<mlir::yao::HOp>(builder.getUnknownLoc(), mlir::yao::GateType::get(&context, 1));
+  function.dump();
+
   // Add the following to include *all* MLIR Core dialects, or selectively
   // include what you need like above. You only need to register dialects that
   // will be *parsed* by the tool, not the one generated
