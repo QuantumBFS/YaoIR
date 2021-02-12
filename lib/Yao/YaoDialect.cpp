@@ -25,36 +25,60 @@ void YaoDialect::initialize() {
       >();
 
   //llvm::errs() << "adding gate type\n";
-  addTypes<GateType>();
+  addTypes<OperatorType, CtrlFlagType, LocationsType, MeasureResultType>();
 }
 
 /// Parse an instance of a type registered to the dialect.
 Type YaoDialect::parseType(DialectAsmParser &parser) const {
-  llvm::errs() << "starting parse\n";
-  if (parser.parseKeyword("gate"))
+  std::string found = "";
+  if (!parser.parseOptionalKeyword("operator")) {
+    found = "operator";
+  // all the op stuff here    
+  } else if (!parser.parseOptionalKeyword("locations")) {
+    found = "locations";
+  } else if (!parser.parseOptionalKeyword("ctrlflags")) {
+    found = "ctrlflags";
+  } else if (!parser.parseOptionalKeyword("measure_result")) {
+    found = "measure_result";
+  } else {
+    // parser.parseKeyword("measure_result");
     return Type();
-  llvm::errs() << "parsed gate kw\n";
-  
+  }
+
   if (parser.parseLess())
     return Type();
-  llvm::errs() << "parsed less kw\n";
   size_t number = 0;
   if (parser.parseInteger(number)) return Type();
-  llvm::errs() << "parsed num kw\n";
   if (number == 0) {
-    parser.emitError(parser.getCurrentLocation(), "gate must apply to at least one qubit ");
+    parser.emitError(parser.getCurrentLocation(), "operator must have at least size one ");
     return Type();
   }
 
   // Parse: `>`
   if (parser.parseGreater())
     return Type();
-  llvm::errs() << "parsed gt kw\n";
-  return GateType::getChecked(parser.getEncodedSourceLoc(parser.getCurrentLocation()), number);
+  
+  llvm::errs() << "found " << found;
+  if (found == "operator")
+    return OperatorType::getChecked(parser.getEncodedSourceLoc(parser.getCurrentLocation()), number);
+  if (found == "locations")
+    return LocationsType::getChecked(parser.getEncodedSourceLoc(parser.getCurrentLocation()), number);
+  if (found == "ctrlflags")
+    return CtrlFlagType::getChecked(parser.getEncodedSourceLoc(parser.getCurrentLocation()), number);
+  if (found == "measure_result")
+    return MeasureResultType::getChecked(parser.getEncodedSourceLoc(parser.getCurrentLocation()), number);
+  llvm_unreachable("unknown yao type");
 }
 
 /// Print an instance of a type registered to the dialect.
 void YaoDialect::printType(Type type, DialectAsmPrinter &printer) const {
-  GateType gateType = type.cast<GateType>();
-  printer << "gate<" << gateType.getNumQubits() << ">";
+  if (auto operatorType = type.dyn_cast<OperatorType>())
+    printer << "operator<" << operatorType.getNumQubits() << ">";
+  else if (auto operatorType = type.dyn_cast<LocationsType>())
+    printer << "locations<" << operatorType.getNumQubits() << ">";
+  else if (auto operatorType = type.dyn_cast<CtrlFlagType>())
+    printer << "ctrlflags<" << operatorType.getNumQubits() << ">";
+  else if (auto operatorType = type.dyn_cast<MeasureResultType>())
+    printer << "measure_result" << operatorType.getNumQubits() << ">";
+  else llvm_unreachable("unknown yao type");
 }

@@ -43,14 +43,18 @@ int main(int argc, char **argv) {
   mlir::FuncOp function = mlir::FuncOp(
       mlir::FuncOp::create(builder.getUnknownLoc(), "moo", funcType));
       
-  auto mod =
-      mlir::ModuleOp::create(mlir::OpBuilder(&context).getUnknownLoc());
+//   auto mod =
+//       mlir::ModuleOp::create(mlir::OpBuilder(&context).getUnknownLoc());
 
   auto entryBlock = function.addEntryBlock();
 
   builder.setInsertionPointToStart(entryBlock);
-  builder.create<mlir::yao::HOp>(builder.getUnknownLoc(), mlir::yao::GateType::get(&context, 1));
-  function.dump();
+  // auto H = builder.create<mlir::yao::HOp>(builder.getUnknownLoc(), mlir::yao::GateType::get(&context, 1));
+  auto i1Ty = builder.getIndexType();
+  auto vfalse = builder.create<mlir::ConstantOp>(
+      builder.getUnknownLoc(), i1Ty, builder.getIntegerAttr(i1Ty, 0));
+  std::vector<mlir::Value> ops = {vfalse, vfalse};
+  llvm::errs() << (mlir::Value)builder.create<mlir::yao::LocationsOp>(builder.getUnknownLoc(), mlir::yao::LocationsType::get(&context, 1), ops) << "\n";
 
   // Add the following to include *all* MLIR Core dialects, or selectively
   // include what you need like above. You only need to register dialects that

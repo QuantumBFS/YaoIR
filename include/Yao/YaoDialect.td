@@ -25,12 +25,33 @@ def Yao_Dialect : Dialect {
 
 
 // Any integer type irrespective of its width and signedness semantics.
-def AnyGate : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::GateType>()">, "gate">;
+def AnyOperator : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::OperatorType>()">, "operator">;
 
 // Any integer type (regardless of signedness semantics) of a specific width.
-class Gate<int width>
-    : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::GateType>() && $_self.cast<::mlir::yao::GateType>().getNumQubits() == " # width>, width # "-bit gate"> {
+class Operator<int width>
+    : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::OperatorType>() && $_self.cast<::mlir::yao::OperatorType>().getNumQubits() == " # width>, width # "-bit operator"> {
   int bitwidth = width;
+}
+
+def AnyCtrlFlags : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::CtrlFlagType>()">, "ctrlflags">;
+
+class CtrlFlags<int width>
+    : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::CtrlFlagType() && $_self.cast<::mlir::yao::CtrlFlagType().getNumQubits() == " # width>, width # "-bit ctrlflags"> {
+  int nqubits = width;
+}
+
+def AnyLocations : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::LocationsType>()">, "locations">;
+
+class Locations<int width>
+    : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::LocationsType() && $_self.cast<::mlir::yao::LocationsType().getNumQubits() == " # width>, width # "-bit locations"> {
+  int nqubits = width;
+}
+
+def AnyMeasureResult : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::MeasureResultType>()">, "measure_result">;
+
+class MeasureResult<int width>
+    : DialectType<Yao_Dialect, CPred<"$_self.isa<::mlir::yao::MeasureResultType() && $_self.cast<::mlir::yao::MeasureResultType().getNumQubits() == " # width>, width # "-bit measure_result"> {
+  int nqubits = width;
 }
 
 //===----------------------------------------------------------------------===//
