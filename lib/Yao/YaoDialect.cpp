@@ -79,6 +79,6 @@ void YaoDialect::printType(Type type, DialectAsmPrinter &printer) const {
   else if (auto operatorType = type.dyn_cast<CtrlFlagType>())
     printer << "ctrlflags<" << operatorType.getNumQubits() << ">";
   else if (auto operatorType = type.dyn_cast<MeasureResultType>())
-    printer << "measure_result" << operatorType.getNumQubits() << ">";
+    printer << "measure_result<" << operatorType.getNumQubits() << ">";
   else llvm_unreachable("unknown yao type");
 }

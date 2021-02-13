@@ -17,20 +17,22 @@ module {
 
         %H = yao.H : !yao.operator<1>
         %I = yao.I : !yao.operator<1>
-        %flag1 = yao.create_flag %c0 : index, !yao.ctrlflag<1>
-        %flag3 = yao.create_flag %c0, %c1, %c0 : index, index, index : !yao.ctrlflag<3>
+        %SWAP = yao.SWAP : !yao.operator<2>
+        %flag1 = yao.create_flags %c0 : index : !yao.ctrlflags<1>
+        %flag3 = yao.create_flags %c0, %c1, %c0 : index, index, index : !yao.ctrlflags<3>
         // 1. single qubit gate
-        yao.gate %H, %l11 : !yao.operator<1> !yao.locations<1>
+        yao.gate %H %l11 : !yao.operator<1> !yao.locations<1>
         // 2. single qubit ctrl gate
-        yao.ctrl %H, %l11, %l12, %flag1 : !yao.operator<1> !yao.locations<1> !yao.locations<1> !yao.ctrlflag<1>
+        yao.ctrl %H %l11 %l12 %flag1 : !yao.operator<1> !yao.locations<1> !yao.locations<1> !yao.ctrlflags<1>
         // 3. measure
-        %C1 = yao.measure %l21 : !yao.locations<2> : !yao.measure_result<2>
+        %C1 = yao.measure %l11 : !yao.locations<1> : !yao.measure_result<1>
+        %C2 = yao.measure %l21 : !yao.locations<2> : !yao.measure_result<2>
         // 4. multi-qubit gate
-        yao.gate %M, %l31 : !yao.operator<3> !yao.locations<3>
+        yao.gate %SWAP %l21 : !yao.operator<2> !yao.locations<2>
         // 5. multi-ctrl single qubit gate
-        yao.ctrl %H, %l11, %l31 : !yao.operator<1> !yao.locations<1> !yao.locations<3>
+        yao.ctrl %H %l11 %l31 %flag3 : !yao.operator<1> !yao.locations<1> !yao.locations<3> !yao.ctrlflags<3>
         // 6. multi-ctrl multi-qubit gate
-        yao.ctrl %S, %l21, %l31, %flag3 : !yao.operator<2> !yao.locations<2> !yao.locations<3> !yao.ctrlflag<3>
+        yao.ctrl %SWAP %l21 %l31 %flag3 : !yao.operator<2> !yao.locations<2> !yao.locations<3> !yao.ctrlflags<3>
         return
     }
 }

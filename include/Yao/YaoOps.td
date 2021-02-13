@@ -12,6 +12,8 @@
 include "YaoDialect.td"
 include "mlir/Interfaces/SideEffectInterfaces.td"
 
+// 1-qubit primitive operators
+
 def IOp : Yao_Op<"I", [NoSideEffect]> {
     let description = [{
         The `yao.I` creates an identity operator.
@@ -73,13 +75,50 @@ def ZOp : Yao_Op<"Z", [NoSideEffect]> {
     }];
 }
 
-def CtrlFlagOp : Yao_Op<"create_flag", [NoSideEffect]> {
+def SOp : Yao_Op<"S", [NoSideEffect]> {
+    let description = [{
+        The `yao.S` creates a S operator.
+    }];
+
+    let results = (outs Operator<1>:$res);
+
+    let assemblyFormat = [{
+        attr-dict `:` type($res)
+    }];
+}
+
+def TOp : Yao_Op<"T", [NoSideEffect]> {
+    let description = [{
+        The `yao.T` creates a T operator.
+    }];
+
+    let results = (outs Operator<1>:$res);
+
+    let assemblyFormat = [{
+        attr-dict `:` type($res)
+    }];
+}
+
+// 2-qubit primitive operators
+def SWAPOp : Yao_Op<"SWAP", [NoSideEffect]> {
+    let description = [{
+        The `yao.SWAP` creates a SWAP operator.
+    }];
+
+    let results = (outs Operator<2>:$res);
+
+    let assemblyFormat = [{
+        attr-dict `:` type($res)
+    }];
+}
+
+def CtrlFlagOp : Yao_Op<"create_flags", [NoSideEffect]> {
     let description = [{
         Create a qubit ctrl flag.
     }];
 
     // should be bool?
-    let arguments = (ins Variadic<I64>:$inputs);
+    let arguments = (ins Variadic<Index>:$inputs);
     let results = (outs AnyCtrlFlags:$res);
     
     let assemblyFormat = [{

@@ -54,7 +54,9 @@ int main(int argc, char **argv) {
   auto vfalse = builder.create<mlir::ConstantOp>(
       builder.getUnknownLoc(), i1Ty, builder.getIntegerAttr(i1Ty, 0));
   std::vector<mlir::Value> ops = {vfalse, vfalse};
-  llvm::errs() << (mlir::Value)builder.create<mlir::yao::LocationsOp>(builder.getUnknownLoc(), mlir::yao::LocationsType::get(&context, 1), ops) << "\n";
+  auto locations = builder.create<mlir::yao::LocationsOp>(builder.getUnknownLoc(), mlir::yao::LocationsType::get(&context, 1), ops);
+  std::vector<mlir::Value> locs = {locations};
+  llvm::errs() << (mlir::Value)builder.create<mlir::yao::MeasureOp>(builder.getUnknownLoc(), mlir::yao::MeasureResultType::get(&context, 1), locs) << "\n";
 
   // Add the following to include *all* MLIR Core dialects, or selectively
   // include what you need like above. You only need to register dialects that
