@@ -112,6 +112,19 @@ def SWAPOp : Yao_Op<"SWAP", [NoSideEffect]> {
     }];
 }
 
+// rotation
+
+def RotateOp : Yao_Op<"rotate", [NoSideEffect]> {
+    let description = [{
+        The `yao.rotate` creates rotation operator that rotates theta on given axis.
+    }];
+    let arguments = (ins AnyOperator:$axis, F64:$theta);
+    let results = (outs AnyOperator:$res);
+    let assemblyFormat = [{
+        $axis $theta attr-dict `:` type($axis) type($theta) `:` type($res)
+    }];
+}
+
 def CtrlFlagOp : Yao_Op<"create_flags", [NoSideEffect]> {
     let description = [{
         Create a qubit ctrl flag.

@@ -10,6 +10,8 @@ module {
         %c4 = constant 4 : index
         %c5 = constant 5 : index
 
+        %theta = constant 2.5 : f64
+
         %l11 = yao.create_locations %c2 : index : !yao.locations<1>
         %l12 = yao.create_locations %c3 : index : !yao.locations<1>
         %l21 = yao.create_locations %c2, %c3 : index, index : !yao.locations<2>
@@ -17,6 +19,8 @@ module {
 
         %H = yao.H : !yao.operator<1>
         %I = yao.I : !yao.operator<1>
+        %X = yao.X : !yao.operator<1>
+        %RX = yao.rotate %X %theta : !yao.operator<1> f64 : !yao.operator<1>
         %SWAP = yao.SWAP : !yao.operator<2>
         %flag1 = yao.create_flags %c0 : index : !yao.ctrlflags<1>
         %flag3 = yao.create_flags %c0, %c1, %c0 : index, index, index : !yao.ctrlflags<3>
