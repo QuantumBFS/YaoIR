@@ -151,25 +151,26 @@ def LocationsOp : Yao_Op<"create_locations", [NoSideEffect]> {
     }];
 }
 
-def GateOp : Yao_Op<"gate", [NoSideEffect]> {
+def GateOp : Yao_Op<"gate", []> {
     let description = [{
         The `yao.gate` applys an operator at given gate locations.
     }];
 
-    let arguments = (ins AnyOperator:$gate, AnyLocations:$locations);
+    let arguments = (ins AnyOperator:$QuOp, AnyLocations:$locations);
     let assemblyFormat = [{
-        $gate $locations attr-dict `:` type($gate) type($locations)
+        $QuOp $locations attr-dict `:` type($QuOp) type($locations)
     }];
+    let hasCanonicalizer = 1;
 }
 
-def CtrlOp : Yao_Op<"ctrl", [NoSideEffect]> {
+def CtrlOp : Yao_Op<"ctrl", []> {
     let description = [{
         The `yao.ctrl` applys an operator at given gate locations.
     }];
 
-    let arguments = (ins AnyOperator:$gate, AnyLocations:$locations, AnyLocations:$ctrl_locations, AnyCtrlFlags:$flag);
+    let arguments = (ins AnyOperator:$QuOp, AnyLocations:$locations, AnyLocations:$ctrl_locations, AnyCtrlFlags:$flag);
     let assemblyFormat = [{
-        $gate $locations $ctrl_locations $flag attr-dict `:` type($gate) type($locations) type($ctrl_locations) type($flag)
+        $QuOp $locations $ctrl_locations $flag attr-dict `:` type($QuOp) type($locations) type($ctrl_locations) type($flag)
     }];
 }
 
@@ -185,5 +186,41 @@ def MeasureOp : Yao_Op<"measure", [NoSideEffect]> {
     }];
 }
 
+def ChainOp : Yao_Op<"chain", [NoSideEffect]> {
+    let description = [{
+        The `yao.chain` combine operators to one operator.
+    }];
+
+    let arguments = (ins Variadic<AnyOperator>:$input);
+    let results = (outs AnyOperator:$res);
+    let assemblyFormat = [{
+        $input attr-dict `:` type($input) `:` type($res)
+    }];
+    let hasCanonicalizer = 1;
+}
+
+def KronOp : Yao_Op<"kron", [NoSideEffect]> {
+    let description = [{
+        The `yao.kron` combine operators to one operator.
+    }];
+
+    let arguments = (ins Variadic<AnyOperator>:$input);
+    let results = (outs AnyOperator:$res);
+    let assemblyFormat = [{
+        $input attr-dict `:` type($input) `:` type($res)
+    }];
+}
+
+def SumOp : Yao_Op<"sum", [NoSideEffect]> {
+    let description = [{
+        The `yao.sum` combine operators to one operator.
+    }];
+
+    let arguments = (ins Variadic<AnyOperator>:$input);
+    let results = (outs AnyOperator:$res);
+    let assemblyFormat = [{
+        $input attr-dict `:` type($input) `:` type($res)
+    }];
+}
 
 #endif // YAO_OPS

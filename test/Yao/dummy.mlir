@@ -26,6 +26,11 @@ module {
         %flag3 = yao.create_flags %c0, %c1, %c0 : index, index, index : !yao.ctrlflags<3>
         // 1. single qubit gate
         yao.gate %H %l11 : !yao.operator<1> !yao.locations<1>
+        yao.gate %H %l11 : !yao.operator<1> !yao.locations<1>
+        // %C = yao.chain %H, %H : !yao.operator<1>, !yao.operator<1> : !yao.operator<1>
+        %SUM = yao.sum %H, %H : !yao.operator<1>, !yao.operator<1> : !yao.operator<1>
+        %KR = yao.kron %H, %H : !yao.operator<1>, !yao.operator<1> : !yao.operator<2>
+        // CHECK: fdsfdsa
         // 2. single qubit ctrl gate
         yao.ctrl %H %l11 %l12 %flag1 : !yao.operator<1> !yao.locations<1> !yao.locations<1> !yao.ctrlflags<1>
         // 3. measure
